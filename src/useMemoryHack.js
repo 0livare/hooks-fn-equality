@@ -1,11 +1,15 @@
 import { useState } from 'react'
 
-let hackyMemory = { add: null }
+let memoryHack = {}
 
 export function useMemoryHack() {
   const [count, setCount] = useState(0)
-  let add = () => setCount(c => c + 1)
+  let increment = () => setCount(c => c + 1)
 
-  hackyMemory.add = hackyMemory.add || add
-  return [1, hackyMemory.add]
+  memoryHack.increment = memoryHack.increment || increment
+  return {
+    constant: 1,
+    count,
+    increment: memoryHack.increment
+  }
 }

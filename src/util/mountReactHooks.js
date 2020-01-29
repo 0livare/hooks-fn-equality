@@ -14,6 +14,10 @@ export function mountObjectHook(hook) {
   return mountReactHook(hook, {}, Object.assign)
 }
 
+/**
+ * This function is most borrowed from:
+ * https://dev.to/joepurnell1/how-i-m-testing-my-custom-react-hook-with-enzyme-and-jest-1deo
+ */
 function mountReactHook(hook, initialHookReturnValue, copyHookValues) {
   let Component = props => props.children(hook())
   let hookResult = initialHookReturnValue

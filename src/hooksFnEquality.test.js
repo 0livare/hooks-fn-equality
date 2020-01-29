@@ -2,30 +2,36 @@ import { act } from 'react-dom/test-utils'
 
 import { useCorrectCallback } from './useCorrectCallback'
 import { useMemoryHack } from './useMemoryHack'
-import { mountArrayHook } from './util'
+import { mountObjectHook } from './util'
 
-let hookResult
-
-beforeEach(() => {
-  let useHack = false
-  let testHook = useHack ? useMemoryHack : useCorrectCallback
-
-  let mountedHook = mountArrayHook(testHook)
-  hookResult = mountedHook.hookResult
+it('works with the memory hack', () => {
+  let hookResult = executeHook(useMemoryHack)
+  expect(hookResult.increment.name).toBe('increment')
+  validateFunctionEquality(hookResult)
 })
 
-it('returns constant value references', () => {
-  let storedReferences = [...hookResult]
-  act(() => {
-    let add = hookResult[1]
-    console.log('add is:', add)
-    add(4)
-  })
-  expect(storedReferences.length).toEqual(hookResult.length)
-
-  console.log('storedReferences', storedReferences)
-  console.log('hookResult', hookResult)
-
-  expect(hookResult[0]).toEqual(storedReferences[0])
-  expect(hookResult[1]).toEqual(storedReferences[1])
+it('works with useCallback', () => {
+  let hookResult = executeHook(useCorrectCallback)
+  expect(hookResult.increment.name).toBe('increment')
+  validateFunctionEquality(hookResult)
 })
+
+function executeHook(hook) {
+  let mountedHook = mountObjectHook(hook)
+  let hookResult = mountedHook.hookResult
+  return hookResult
+}
+
+function validateFunctionEquality(hookResult) {
+  // Store the last result of running the hook
+  let stored = { ...hookResult }
+
+  // Force a re-render to run the hook again
+  expect(hookResult.count).toEqual(0)
+  act(hookResult.increment)
+  expect(hookResult.count).toEqual(1)
+
+  // Compare the previous results to the current results
+  expect(hookResult.constant).toEqual(stored.constant)
+  expect(hookResult.increment).toEqual(stored.increment)
+}
