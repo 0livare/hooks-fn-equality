@@ -1,5 +1,5 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import { act } from 'react-dom/test-utils'
 
 export function mountArrayHook(hook) {
@@ -15,7 +15,7 @@ export function mountObjectHook(hook) {
 }
 
 /**
- * This function is most borrowed from:
+ * This function is mostly borrowed from:
  * https://dev.to/joepurnell1/how-i-m-testing-my-custom-react-hook-with-enzyme-and-jest-1deo
  */
 function mountReactHook(hook, initialHookReturnValue, copyHookValues) {
@@ -24,7 +24,7 @@ function mountReactHook(hook, initialHookReturnValue, copyHookValues) {
   let componentMount
 
   act(() => {
-    componentMount = shallow(
+    componentMount = mount(
       <Component>
         {hookValues => {
           copyHookValues(hookResult, hookValues)
